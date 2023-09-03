@@ -9,9 +9,10 @@ const AppRouter = () => {
 		<Routes>
 			<Route path="/portillodaniel30/" element={<Navigation></Navigation>}>
 				<Route index element={<HomePage></HomePage>}></Route>
-				<Route path="/portillodaniel30/pokemon/:id" element={<PokemonPage></PokemonPage>}></Route>
+				<Route path="pokemon/:id" element={<PokemonPage></PokemonPage>}></Route>
 				<Route path="/portillodaniel30/search" element={<SearchPage></SearchPage>}></Route>
 			</Route>
+			<Route path="*" element={<Navigate to="/portillodaniel30/"></Navigate>}></Route>
 		</Routes>
 	);
 };

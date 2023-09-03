@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useForm} from '../hook/useForm';
 import {PokemonContext} from './PokemonContext';
 
@@ -94,6 +94,7 @@ export const PokemonProvider = ({children}) => {
 	});
 
 	const [filteredPokemons, setfilteredPokemons] = useState([]);
+	const typeCheckBox = useRef([]);
 
 	const handleCheckbox = (e) => {
 		setTypeSelected({
@@ -102,10 +103,35 @@ export const PokemonProvider = ({children}) => {
 		});
 
 		if (e.target.checked) {
-			const filteredResults = globalPokemons.filter((pokemon) => pokemon.types.map((type) => type.type.name).includes(e.target.name));
-			setfilteredPokemons([...filteredPokemons, ...filteredResults]);
+			if (!typeCheckBox.current.includes(e.target.name)) {
+				typeCheckBox.current = [...typeCheckBox.current, e.target.name];
+			}
+			if (typeCheckBox.current.length >= 3) {
+				return;
+			}
+			let filteredResults = '';
+			if (typeCheckBox.current.length == 2) {
+				let checker = (box, target) => target.every((v) => box.includes(v));
+				filteredResults = globalPokemons.filter((pokemon) => {
+					const types = pokemon.types.map((type) => type.type.name);
+					return checker(types, typeCheckBox.current);
+				});
+			} else {
+				filteredResults = globalPokemons.filter((pokemon) => pokemon.types.map((type) => type.type.name).includes(e.target.name));
+			}
+			setfilteredPokemons([...filteredResults]);
 		} else {
-			const filteredResults = filteredPokemons.filter((pokemon) => !pokemon.types.map((type) => type.type.name).includes(e.target.name));
+			let filteredResults = '';
+			typeCheckBox.current = typeCheckBox.current.filter((type) => type !== e.target.name);
+			if (typeCheckBox.current.length == 0) {
+				filteredResults = filteredPokemons.filter((pokemon) => !pokemon.types.map((type) => type.type.name).includes(e.target.name));
+			} else {
+				let checker = (box, target) => target.every((v) => box.includes(v));
+				filteredResults = globalPokemons.filter((pokemon) => {
+					const types = pokemon.types.map((type) => type.type.name);
+					return checker(types, typeCheckBox.current);
+				});
+			}
 			setfilteredPokemons([...filteredResults]);
 		}
 	};
@@ -127,6 +153,8 @@ export const PokemonProvider = ({children}) => {
 				//filter containers
 				handleCheckbox,
 				filteredPokemons,
+				typeCheckBox,
+				typeSelected,
 			}}
 		>
 			{children}

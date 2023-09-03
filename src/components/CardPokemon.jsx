@@ -1,5 +1,5 @@
 import {Link} from 'react-router-dom';
-
+import PropTypes from 'prop-types';
 export const CardPokemon = ({pokemon}) => {
 	return (
 		<Link to={`/portillodaniel30/pokemon/${pokemon.id}`} className="card-pokemon">
@@ -19,4 +19,8 @@ export const CardPokemon = ({pokemon}) => {
 			</div>
 		</Link>
 	);
+};
+
+CardPokemon.propTypes = {
+	pokemon: PropTypes.object,
 };
